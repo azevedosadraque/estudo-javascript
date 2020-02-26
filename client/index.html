@@ -17,8 +17,8 @@
         
         <div class="form-group">
             <label for="data">Data</label>
-            <input type="date" id="data" class="form-control" required autofocus/>        
-        </div>    
+            <input type="text" placeholder="dd/mm/aaaa" id="data" class="form-control" required autofocus/>        
+        </div> 
         
         <div class="form-group">
             <label for="quantidade">Quantidade</label>
@@ -58,9 +58,10 @@
     <script src="js/app/helpers/Bind.js"></script>
     <script src="js/app/services/NegociacaoService.js"></script>
     <script src="js/app/services/HttpService.js"></script>
-    <script src="js/app/models/Ordenacao.js"></script>
+    <script src="js/app/models/Ordenacao.js"></script> 
+    <script src="js/app/polyfill/es6.js"></script>
     <script>
-        let negociacaoController = new NegociacaoController();
+        var negociacaoController = new NegociacaoController();
     </script>
     
 </body>
