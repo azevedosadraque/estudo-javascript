@@ -23,4 +23,15 @@ class ListaNegociacoes {
     get volumeTotal() {
         return this._negociacoes.reduce((total, n) => total + n.volume, 0.0);
     }
+
+    ordena(coluna, ordem){
+
+        console.log(coluna, ordem)
+        
+        if(ordem == 'crescente')
+            this._negociacoes = this._negociacoes.sort((a, b) => a[coluna] - b[coluna]);
+        else
+            this._negociacoes = this._negociacoes.sort((a, b) => b[coluna] - a[coluna]);
+
+    }
 }

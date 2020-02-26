@@ -10,13 +10,15 @@ class NegociacaoController {
         this._listaNegociacoes = new Bind(
             new ListaNegociacoes(),
             new NegociacoesView($('#negociacoesView')),
-            'adiciona', 'esvazia');
+            'adiciona', 'esvazia', 'ordena');
 
         this._mensagem = new Bind(
             new Mensagem(),
             new MensagemView($('#mensagemView')),
             'texto'
         );
+
+        this._controleOrdenacao = new Ordenacao();
         
     }
     
@@ -62,5 +64,12 @@ class NegociacaoController {
         this._inputQuantidade.value = 1;
         this._inputValor.value = 0.0;
         this._inputData.focus();   
+    }
+
+    ordenarLista(coluna) {
+
+        this._controleOrdenacao.coluna = coluna;
+        
+        this._listaNegociacoes.ordena(coluna, this._controleOrdenacao.ordem);
     }
 }
