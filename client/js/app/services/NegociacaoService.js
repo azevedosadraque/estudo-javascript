@@ -1,19 +1,16 @@
 class NegociacaoService {
-
+    
     constructor() {
-
+        
         this._http = new HttpService();
     }
-
+    
     obterNegociacoesDaSemana() {
-
-
+               
         return this._http
             .get('negociacoes/semana')
             .then(negociacoes => {
-
                 console.log(negociacoes);
-
                 return negociacoes.map(objeto => new Negociacao(new Date(objeto.data), objeto.quantidade, objeto.valor));
             })
             .catch(erro => {
@@ -21,44 +18,38 @@ class NegociacaoService {
                 throw new Error('Não foi possível obter as negociações da semana');
             });  
     }
-
+    
     obterNegociacoesDaSemanaAnterior() {
-
-
+               
         return this._http
             .get('negociacoes/anterior')
             .then(negociacoes => {
-
                 console.log(negociacoes);
-
                 return negociacoes.map(objeto => new Negociacao(new Date(objeto.data), objeto.quantidade, objeto.valor));
             })
             .catch(erro => {
                 console.log(erro);
                 throw new Error('Não foi possível obter as negociações da semana anterior');
-            });  
+            });   
     }
-
+    
     obterNegociacoesDaSemanaRetrasada() {
-
-
+               
         return this._http
             .get('negociacoes/retrasada')
             .then(negociacoes => {
-
                 console.log(negociacoes);
-
                 return negociacoes.map(objeto => new Negociacao(new Date(objeto.data), objeto.quantidade, objeto.valor));
             })
             .catch(erro => {
                 console.log(erro);
                 throw new Error('Não foi possível obter as negociações da semana retrasada');
             });  
-
+        
     }
-
+    
     obterNegociacoes() {
-
+        
         return Promise.all([
             this.obterNegociacoesDaSemana(),
             this.obterNegociacoesDaSemanaAnterior(),
@@ -66,47 +57,47 @@ class NegociacaoService {
         ]).then(periodos => {
 
             let negociacoes = periodos
-                .reduce((dados, periodo) => dados.concat(periodo), []);
+                .reduce((dados, periodo) => dados.concat(periodo), [])
+                .map(dado => new Negociacao(new Date(dado.data), dado.quantidade, dado.valor ));
 
             return negociacoes;
-
         }).catch(erro => {
             throw new Error(erro);
         });
+	} 
 
-    } 
+    cadastra(negociacao) {
 
-    cadastra(negociacao){
-         
         return ConnectionFactory
-                .getConnection()
-                .then(connection => new NegociacaoDao(connection))
-                .then(dao => dao.adiciona(negociacao))
-                .then(() => 'Negociacao adicionada com sucesso')
-                .catch(() => {
-                    throw new Error('Não foi possível adicionar a negociação')
-                });
+            .getConnection()
+            .then(connection => new NegociacaoDao(connection))
+            .then(dao => dao.adiciona(negociacao))
+            .then(() => 'Negociação adicionada com sucesso')
+            .catch(erro => {
+                console.log(erro);
+                throw new Error('Não foi possível adicionar a negociação')
+            });
     }
-     
+
     lista() {
-         
+
         return ConnectionFactory
                 .getConnection()
                 .then(connection => new NegociacaoDao(connection))
                 .then(dao => dao.listaTodos())
-                .catch((erro) => {
+                .catch(erro => {
                     console.log(erro);
                     throw new Error('Não foi possível obter as negociações')
-                });
+                })
     }
 
-    apaga(){
-        
+    apaga() {
+
         return ConnectionFactory
             .getConnection()
             .then(connection => new NegociacaoDao(connection))
             .then(dao => dao.apagaTodos())
-            .then(() => 'Negociacões apagadas com sucesso')
+            .then(() => 'Negociações apagadas com sucesso')
             .catch(erro => {
                 console.log(erro);
                 throw new Error('Não foi possível apagar as negociações')
@@ -114,17 +105,17 @@ class NegociacaoService {
 
     }
 
-    importa(listaAtual){ 
+    importa(listaAtual) {
 
         return this.obterNegociacoes()
             .then(negociacoes => 
                 negociacoes.filter(negociacao => 
-                    !listaAtual.some(negociacaoExistente =>
-                        negociacao.isEquals(negociacaoExistente))
-            ))
-            .catch(erro =>  {
+                    !listaAtual.some(negociacaoExistente => 
+                        JSON.stringify(negociacao) == JSON.stringify(negociacaoExistente)))
+            )
+            .catch(erro => {
                 console.log(erro);
-                throw new Error('Não foi possível buscar negociações');
+                throw new Error('Não foi possível buscar negociações para importar');
             })
     }
 }
